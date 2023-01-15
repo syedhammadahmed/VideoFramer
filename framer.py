@@ -1,4 +1,5 @@
 import os
+import random
 
 import cv2
 from moviepy.video.io.VideoFileClip import VideoFileClip
@@ -18,7 +19,7 @@ frame_config = {
     "log_directory": "logs/"
 }
 
-def framify(video_clip_name):
+def framify(video_):
     clip = cv2.VideoCapture(video_clip_name)
     success, image = clip.read()
     count = 0
@@ -30,6 +31,9 @@ def framify(video_clip_name):
         print(str(count), " frames extracted from ", video_clip_path)
 
 
-
 if __name__ == '__main__':
-    framify('WSAhvFpatFU.mp4')
+    # framify('WSAhvFpatFU.mp4')
+    n = 5
+    file_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    sample = myutil.get_random_sublist(file_list, n)
+    print(sample)
