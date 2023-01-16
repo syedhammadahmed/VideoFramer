@@ -19,7 +19,27 @@ frame_config = {
     "log_directory": "logs/"
 }
 
-def framify(video_):
+# def framify(video_):
+#     clip = cv2.VideoCapture(video_clip_name)
+#     success, image = clip.read()
+#     count = 0
+#     while success:
+#         x = '/home/syedhammadahmed/PycharmProjects/VideoTrimmer'
+#         cv2.imwrite( x + "/WSAhvFpatFU/%d.jpg" % count, image)  # save frame as JPEG file
+#         success, image = clip.read()
+#         count += 1
+#         print(str(count), " frames extracted from ", video_clip_path)
+
+def get_frames_root_directory():
+    frame_config['frames'].
+
+
+def framify(clip_directory_path, clip_name):
+    clip_path = clip_directory_path + clip_name # /home/syedhammadahmed/Datasets/MOB/clips/
+    frame_root_dir = get_frames_root_directory() # /home/syedhammadahmed/Datasets/MOB/clips
+    stream_type = "video"
+    video_class = "malign"
+
     clip = cv2.VideoCapture(video_clip_name)
     success, image = clip.read()
     count = 0
