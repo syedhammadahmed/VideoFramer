@@ -9,8 +9,8 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 # Press the green button in the gutter to run the script.
 def makeClips(video_id, video_class, stream_type):
-    stream_type_index = myutil.clip_config["stream_type"].index(stream_type)
-    video_extension = myutil.clip_config["stream_type_extension"][stream_type_index]
+    stream_type_index = myutil.frame_config["stream_type"].index(stream_type)
+    video_extension = myutil.frame_config["stream_type_extension"][stream_type_index]
     video_name = video_id + "." + video_extension
     video_root_dir = myutil.get_download_root_directory()
     video_sub_dir = stream_type + "/" + video_class + "/" + video_name
@@ -28,7 +28,7 @@ def makeClips(video_id, video_class, stream_type):
         clip = AudioFileClip(video_file_path)
     else:
         clip = VideoFileClip(video_file_path)
-    clip_duration = myutil.clip_config["clip_duration"]
+    clip_duration = myutil.frame_config["clip_duration"]
 
     clip_count = 0
     start_seconds = 0

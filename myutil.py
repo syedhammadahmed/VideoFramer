@@ -8,45 +8,44 @@ from sys import platform
 import pandas as pd
 import logging
 
-clip_config = {
-    "win_root": "D:",
+frame_config = {
+    "win_root": "E:",
     "linux_root": os.path.expanduser('~'),
-    "videos_directory": "/Datasets/MOB/",
-    "clips_directory": "/Datasets/MOB/clips/",
-    "dataset_file": "dataset.xlsx",
-    "clip_duration": 10,  # in seconds
+    "dataset_root": "/Datasets/MOB/",
+    "clips_sub_root": "clips/",
+    "frames_sub_root": "frames/",
+    "dataset_file": "clips.xlsx",
     "classes": ["benign", "malign"],
     "stream_type": ["audio", "video"],
     "stream_type_extension": ["m4a", "mp4"],
-    "clip_api_class": ["moviepy.audio.io.AudioFileClip", "moviepy.video.io.VideoFileClip"],
     "log_directory": "logs/"
 }
 
+def get_stream_extension(stream_type):
+    stream_type_index = frame_config["stream_type"].index(stream_type)
+    extension = frame_config["stream_type_extension"][stream_type_index]
+    return extension
 
-def get_clip_root_directory():
+
+# options: 'clips', 'frames'
+def get_root_directory(name='clips'): #e.g. for the key 'clips_directory'
+    os_root = frame_config["linux_root"]
+    # if platform == "linux" or platform == "linux2":
+    if platform == "win32":
+        os_root = frame_config["win_root"]
+
+    return os_root + frame_config["dataset_root"] + frame_config[name + "_sub_root"]
+
+
+def get_dataset_file():
     if platform == "linux" or platform == "linux2":
-        return clip_config["linux_root"] + clip_config["clips_directory"]
+        return frame_config["linux_root"] + frame_config["clips_directory"] + frame_config["dataset_file"]
     elif platform == "win32":
-        return clip_config["win_root"] + clip_config["clips_directory"]
-
-
-def get_download_root_directory():
-    if platform == "linux" or platform == "linux2":
-        return clip_config["linux_root"] + clip_config["videos_directory"]
-    elif platform == "win32":
-        return clip_config["win_root"] + clip_config["videos_directory"]
-
-
-def get_dataset_file_directory():
-    if platform == "linux" or platform == "linux2":
-        return clip_config["linux_root"] + clip_config["videos_directory"]
-    elif platform == "win32":
-        return clip_config["win_root"] + clip_config["videos_directory"]
+        return frame_config["win_root"] + frame_config["clips_directory"] + frame_config["dataset_file"]
 
 
 def make_directory(path):
     try:
-        # os.mkdir(path)
         exists = os.path.exists(path)
         os.makedirs(path, 0o777, exist_ok="True")
     except OSError as error:
@@ -54,19 +53,21 @@ def make_directory(path):
     return exists
 
 
-def get_list_from_excel(dataset_filename, video_class):
-    sheet_df = pd.read_excel(dataset_filename, sheet_name=video_class)
+#returns all elements in the first column by default
+def get_list_from_excel(file_name, sheet_name, row_start=0, row_end=-1, column_start=0, column_end=1):
+    sheet_df = pd.read_excel(file_name, sheet_name=sheet_name)
     sheet_np = sheet_df.to_numpy()
-    video_list = sheet_np[:, 0]
+    video_list = sheet_np[row_start:row_end, column_start:column_end]
     return video_list
 
 
-def make_clip_directories():
-    root_dir = get_clip_root_directory()
+def make_frame_directories():
+    clip_root_dir = get_clip_root_directory()
+    frame_root_dir = get_frame_root_directory()
     stream_type = "video"
     video_class = "malign"
-    # video_list = get_list_from_excel(get_dataset_file_directory() + clip_config["dataset_file"], video_class)
-    video_list = get_list_from_directory(get_dataset_file_directory() + stream_type + "/" + video_class + "/")
+    # video_list = get_list_from_excel(get_dataset_file_directory() + frame_config["dataset_file"], video_class)
+    video_list = get_list_from_directory(root_dir + stream_type + "/" + video_class + "/", False)
     for video_id in video_list:
         video_id = video_id[0:len(video_id) - 4]
         sub_dir = stream_type + "/" + video_class + "/" + video_id + "/"
@@ -78,13 +79,16 @@ def make_clip_directories():
             print(f"Directory '{download_file_path}' already exists...")
 
 
-def get_list_from_directory(path):
-    files = [f for f in listdir(path) if isfile(join(path, f))]
+def get_list_from_directory(path, is_file=True):
+    if not is_file:
+        files = [f for f in listdir(path) if not isfile(join(path, f))]
+    else:
+        files = [f for f in listdir(path) if isfile(join(path, f))]
     return files
 
 
 def get_log_directory():
-    return get_clip_root_directory() + clip_config["log_directory"]
+    return get_clip_root_directory() + frame_config["log_directory"]
 
 
 def add_log(msg, level):
@@ -103,4 +107,5 @@ def add_log(msg, level):
     logger.log(level, msg)
 
 
-download_file_path = os.path.join(root_dir, sub_dir)
+# print(get_list_from_excel(get_dataset_file(), "malign"))
+make_frame_directories()

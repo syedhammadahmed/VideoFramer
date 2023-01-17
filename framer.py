@@ -5,19 +5,6 @@ import cv2
 from moviepy.video.io.VideoFileClip import VideoFileClip
 import myutil
 
-frame_config = {
-    "win_root": "E:",
-    "linux_root": os.path.expanduser('~'),
-    "clips_directory": "/Datasets/MOB/clips/",
-    "frames_directory": "/Datasets/MOB/frames/",
-    "dataset_file": "dataset.xlsx",
-    "clip_duration": 10, # in seconds
-    "classes": ["benign", "malign"],
-    "stream_type": ["audio", "video"],
-    "stream_type_extension": ["m4a", "mp4"],
-    "clip_api_class": ["moviepy.audio.io.AudioFileClip", "moviepy.video.io.VideoFileClip"],
-    "log_directory": "logs/"
-}
 
 # def framify(video_):
 #     clip = cv2.VideoCapture(video_clip_name)
@@ -30,22 +17,20 @@ frame_config = {
 #         count += 1
 #         print(str(count), " frames extracted from ", video_clip_path)
 
-def get_frames_root_directory():
-    frame_config['frames'].
 
-
-def framify(clip_directory_path, clip_name):
-    clip_path = clip_directory_path + clip_name # /home/syedhammadahmed/Datasets/MOB/clips/
-    frame_root_dir = get_frames_root_directory() # /home/syedhammadahmed/Datasets/MOB/clips
+def framify(clip_name, clip_path, frames_root_path, clip_name):
+    stream_type = "video"
+    clip_file = clip_path + clip_name + myutil.get_stream_extension(stream_type)
+    frame_root_dir = myutil.get_root_directory("frames") # /home/syedhammadahmed/Datasets/MOB/frames/
     stream_type = "video"
     video_class = "malign"
-
-    clip = cv2.VideoCapture(video_clip_name)
+    frame_dir = frame_root_dir + stream_type + video_class + clip_name
+    myutil.make_directory(frame_dir)
+    clip = cv2.VideoCapture(clip_file)
     success, image = clip.read()
     count = 0
     while success:
-        x = '/home/syedhammadahmed/PycharmProjects/VideoTrimmer'
-        cv2.imwrite( x + "/WSAhvFpatFU/%d.jpg" % count, image)  # save frame as JPEG file
+        cv2.imwrite(frame_dir + str(count).zfill(4) + '.jpg', image)  # save frame as JPEG file
         success, image = clip.read()
         count += 1
         print(str(count), " frames extracted from ", video_clip_path)
