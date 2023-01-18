@@ -108,4 +108,4 @@ def add_log(msg, level):
 
 
 # print(get_list_from_excel(get_dataset_file(), "malign"))
-make_frame_directories()
+# make_frame_directories()
