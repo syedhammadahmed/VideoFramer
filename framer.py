@@ -19,9 +19,8 @@ import myutil
 
 
 def framify(clip_name, clip_path, frames_root_path):
-    stream_type = "video"
-    video_class = "malign"
-    clip_file = clip_path + stream_type + '/' + video_class + '/' + clip_name + '.' + myutil.get_stream_extension(stream_type)
+    clip_file = clip_path + clip_name
+    clip_name = clip_name[0:len(clip_name) - 4]
     frame_dir = frames_root_path + stream_type + '/' + video_class + '/' + clip_name + '/'
     exists = myutil.make_directory(frame_dir)
     if exists:
@@ -40,6 +39,7 @@ def framify(clip_name, clip_path, frames_root_path):
     print(str(count), " frames extracted from the clip: ", clip_name)
     return count
 
+
 if __name__ == '__main__':
     frames_root_path = myutil.get_root_directory("frames") # /home/syedhammadahmed/Datasets/MOB/frames/
     clips_root_path = myutil.get_root_directory("clips") # /home/syedhammadahmed/Datasets/MOB/clips/
@@ -48,12 +48,15 @@ if __name__ == '__main__':
     total_videos = 0
     stream_type = "video"
     video_class = "malign"
-    clip_list = myutil.get_list_from_directory(myutil.get_root_directory("clips") + stream_type + "/" + video_class + "/")
-    for clip_name in clip_list:
-        clip_name = clip_name[0:len(clip_name)-4]
-        count = framify(clip_name, clips_root_path, frames_root_path)
-        total_videos += 1
-        total_frames += count
+    clips_root_path = clips_root_path + stream_type + "/" + video_class + "/"
+    clips_directories_list = myutil.get_list_from_directory(clips_root_path, False)
+    for clip_directory in clips_directories_list:
+        video_directory = clips_root_path + clip_directory + "/"
+        clips_list = myutil.get_list_from_directory(video_directory)
+        for clip in clips_list:
+            count = framify(clip, video_directory, frames_root_path)
+            total_videos += 1
+            total_frames += count
         if total_videos == 5:
             break
     print(f"Total frames => {total_frames}")
